@@ -8,17 +8,16 @@ export const HeroContainer = styled.div`
   position: relative;
   padding: 180px 30px 80px 30px;
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.bg};
-  z-index: 1;
+  background-color: transparent;
+  z-index: 2;
   @media (max-width: 960px) {
     padding: 150px 16px 66px 16px;
     min-height: 90vh;
   }
-  @media (max-width: 640) {
+  @media (max-width: 640px) {
     padding: 100px 16px 32px 16px;
     min-height: 85vh;
   }
-  z-index: 1;
   /* make bottom a straight line */
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 `;
@@ -81,7 +80,7 @@ export const HeroRightContainer = styled.div`
     order: 1;
     justify-content: center;
     align-items: center;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
   }
 
   @media (max-width: 640px) {
@@ -97,18 +96,19 @@ export const Img = styled.img`
   z-index: 50;
   max-height: 400px;
   border-radius: 50%;
-  border: 2px  solid #e3bb0a;
-  box-shadow: 5px 5px 25px #e3bb0a;
+  border: 2px solid #e3bb0a;
+  box-shadow: 0 0 25px rgba(227, 187, 10, 0.5);
+  background-color: ${({ theme }) => theme.bg || "#090717"};
 
   @media (max-width: 768px) {
-    max-width: 400px;
-    max-height: 400px;
+    max-width: 320px;
+    max-height: 320px;
     z-index: 50;
   }
 
   @media (max-width: 640px) {
-    max-width: 280px;
-    max-height: 280px;
+    max-width: 260px;
+    max-height: 260px;
     z-index: 50;
   }
 `;
