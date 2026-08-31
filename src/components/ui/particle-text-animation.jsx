@@ -82,7 +82,7 @@ class Particle {
 
         if (drawAsPoints) {
             ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`
-            ctx.fillRect(this.pos.x, this.pos.y, 2, 2)
+            ctx.fillRect(this.pos.x, this.pos.y, 2.5, 2.5)
         } else {
             ctx.fillStyle = `rgb(${currentColor.r}, ${currentColor.g}, ${currentColor.b})`
             ctx.beginPath()
@@ -112,24 +112,12 @@ class Particle {
     }
 
     generateRandomPos(x, y, mag) {
-        const randomX = Math.random() * 1000
-        const randomY = Math.random() * 500
-
-        const direction = {
-            x: randomX - x,
-            y: randomY - y,
-        }
-
-        const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y)
-        if (magnitude > 0) {
-            direction.x = (direction.x / magnitude) * mag
-            direction.y = (direction.y / magnitude) * mag
-        }
-
+        const angle = Math.random() * Math.PI * 2;
+        const distance = mag + Math.random() * 200;
         return {
-            x: x + direction.x,
-            y: y + direction.y,
-        }
+            x: x + Math.cos(angle) * distance,
+            y: y + Math.sin(angle) * distance,
+        };
     }
 }
 
@@ -145,28 +133,16 @@ export default function ParticleTextEffect({ words = DEFAULT_WORDS, onComplete }
     const wordIndexRef = useRef(0);
     const mouseRef = useRef({ x: 0, y: 0, isPressed: false, isRightClick: false });
 
-    const pixelSteps = 6;
+    const pixelSteps = 3;
     const drawAsPoints = true;
-        const hasCompletedRef = useRef(false);
+    const hasCompletedRef = useRef(false);
 
     const generateRandomPos = (x, y, mag) => {
-        const randomX = Math.random() * 1000;
-        const randomY = Math.random() * 500;
-
-        const direction = {
-            x: randomX - x,
-            y: randomY - y,
-        };
-
-        const magnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
-        if (magnitude > 0) {
-            direction.x = (direction.x / magnitude) * mag;
-            direction.y = (direction.y / magnitude) * mag;
-        }
-
+        const angle = Math.random() * Math.PI * 2;
+        const distance = mag + Math.random() * 200;
         return {
-            x: x + direction.x,
-            y: y + direction.y,
+            x: x + Math.cos(angle) * distance,
+            y: y + Math.sin(angle) * distance,
         };
     };
 
@@ -177,24 +153,23 @@ export default function ParticleTextEffect({ words = DEFAULT_WORDS, onComplete }
         offscreenCanvas.height = canvas.height;
         const offscreenCtx = offscreenCanvas.getContext("2d");
 
-            // Choose a responsive font size based on canvas size
-            // Keep font within reasonable min/max bounds and scale with viewport
-            const fontSize = Math.max(18, Math.floor(Math.min(canvas.width * 0.12, canvas.height * 0.28)));
-            offscreenCtx.fillStyle = "white";
-            offscreenCtx.font = `bold ${fontSize}px Arial`;
-            offscreenCtx.textAlign = "center";
-            offscreenCtx.textBaseline = "middle";
-            // draw centered text
-            offscreenCtx.fillText(word, canvas.width / 2, canvas.height / 2);
+        // Choose a responsive font size based on canvas size
+        const fontSize = Math.max(42, Math.floor(Math.min(canvas.width * 0.12, canvas.height * 0.25)));
+        offscreenCtx.fillStyle = "white";
+        offscreenCtx.font = `bold ${fontSize}px "Segoe UI", Roboto, Arial, sans-serif`;
+        offscreenCtx.textAlign = "center";
+        offscreenCtx.textBaseline = "middle";
+        // draw centered text
+        offscreenCtx.fillText(word, canvas.width / 2, canvas.height / 2);
 
         const imageData = offscreenCtx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
 
-        // Generate new color
+        // Generate new vibrant color
         const newColor = {
-            r: Math.random() * 255,
-            g: Math.random() * 255,
-            b: Math.random() * 255,
+            r: Math.floor(Math.random() * 160 + 95),
+            g: Math.floor(Math.random() * 160 + 95),
+            b: Math.floor(Math.random() * 255),
         };
 
         const particles = particlesRef.current;
@@ -303,23 +278,23 @@ export default function ParticleTextEffect({ words = DEFAULT_WORDS, onComplete }
             });
         }
 
-            // Auto-advance words every ~4 seconds (240 frames @ 60fps)
-            frameCountRef.current++;
-            // advance every ~240 frames (~4s at 60fps). When we reach the last word, call onComplete once.
-            if (frameCountRef.current >= 240) {
-                frameCountRef.current = 0;
-                if (wordIndexRef.current < words.length - 1) {
-                    wordIndexRef.current = wordIndexRef.current + 1;
-                    nextWord(words[wordIndexRef.current], canvas);
-                } else if (!hasCompletedRef.current) {
-                    hasCompletedRef.current = true;
-                    // allow one final frame draw, then notify parent that the sequence finished
-                    if (typeof onComplete === "function") {
-                        // call asynchronously so we don't interrupt the render loop mid-frame
-                        setTimeout(() => onComplete(), 50);
-                    }
+        // Auto-advance words every ~4 seconds (240 frames @ 60fps)
+        frameCountRef.current++;
+        // advance every ~240 frames (~4s at 60fps). When we reach the last word, call onComplete once.
+        if (frameCountRef.current >= 240) {
+            frameCountRef.current = 0;
+            if (wordIndexRef.current < words.length - 1) {
+                wordIndexRef.current = wordIndexRef.current + 1;
+                nextWord(words[wordIndexRef.current], canvas);
+            } else if (!hasCompletedRef.current) {
+                hasCompletedRef.current = true;
+                // allow one final frame draw, then notify parent that the sequence finished
+                if (typeof onComplete === "function") {
+                    // call asynchronously so we don't interrupt the render loop mid-frame
+                    setTimeout(() => onComplete(), 50);
                 }
             }
+        }
 
         animationRef.current = requestAnimationFrame(animate);
     };
@@ -328,27 +303,31 @@ export default function ParticleTextEffect({ words = DEFAULT_WORDS, onComplete }
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-            // set canvas to viewport size and keep it in sync on resize
-            const setCanvasSize = () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            };
+        // set canvas to viewport size with DPR scaling to eliminate blurriness
+        const setCanvasSize = () => {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = window.innerWidth * dpr;
+            canvas.height = window.innerHeight * dpr;
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
+        };
 
-            setCanvasSize();
+        setCanvasSize();
 
-            // Initialize with first word
-            nextWord(words[0], canvas);
+        // Initialize with first word
+        nextWord(words[0], canvas);
 
-            // Start animation
-            animate();
+        // Start animation
+        animate();
 
         // Mouse event handlers
         const handleMouseDown = (e) => {
             mouseRef.current.isPressed = true;
             mouseRef.current.isRightClick = e.button === 2;
             const rect = canvas.getBoundingClientRect();
-            mouseRef.current.x = e.clientX - rect.left;
-            mouseRef.current.y = e.clientY - rect.top;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            mouseRef.current.x = (e.clientX - rect.left) * dpr;
+            mouseRef.current.y = (e.clientY - rect.top) * dpr;
         };
 
         const handleMouseUp = () => {
@@ -358,24 +337,25 @@ export default function ParticleTextEffect({ words = DEFAULT_WORDS, onComplete }
 
         const handleMouseMove = (e) => {
             const rect = canvas.getBoundingClientRect();
-            mouseRef.current.x = e.clientX - rect.left;
-            mouseRef.current.y = e.clientY - rect.top;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            mouseRef.current.x = (e.clientX - rect.left) * dpr;
+            mouseRef.current.y = (e.clientY - rect.top) * dpr;
         };
 
         const handleContextMenu = (e) => {
             e.preventDefault();
         };
 
-            canvas.addEventListener("mousedown", handleMouseDown);
-            canvas.addEventListener("mouseup", handleMouseUp);
-            canvas.addEventListener("mousemove", handleMouseMove);
-            canvas.addEventListener("contextmenu", handleContextMenu);
-            const handleResize = () => {
-                setCanvasSize();
-                // regenerate layout for the current word so particles map correctly
-                nextWord(words[wordIndexRef.current], canvas);
-            };
-            window.addEventListener("resize", handleResize);
+        canvas.addEventListener("mousedown", handleMouseDown);
+        canvas.addEventListener("mouseup", handleMouseUp);
+        canvas.addEventListener("mousemove", handleMouseMove);
+        canvas.addEventListener("contextmenu", handleContextMenu);
+        const handleResize = () => {
+            setCanvasSize();
+            // regenerate layout for the current word so particles map correctly
+            nextWord(words[wordIndexRef.current], canvas);
+        };
+        window.addEventListener("resize", handleResize);
 
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
