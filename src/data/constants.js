@@ -9,10 +9,10 @@ export const Bio = {
     "Competitive Programmer",
   ],
   description:
-    "Pursuing a Bachelor of Technology in Artificial Intelligence at Mahindra University, Hyderabad (CGPA 7.11/10, expected Sept 2026). I build AI-driven full-stack systems - from LLM-powered recommendation engines to voice-controlled automation platforms - and bring hands-on experience across machine learning, backend engineering, and ethical hacking to turn complex problems into secure, scalable, real-world products.",
+    "Graduated as Bachelor of Technology in Artificial Intelligence at Mahindra University, Hyderabad (CGPA 7.11/10, expected Sept 2026). I build AI-driven full-stack systems - from LLM-powered recommendation engines to voice-controlled automation platforms - and bring hands-on experience across machine learning, backend engineering, and ethical hacking to turn complex problems into secure, scalable, real-world products.",
   github: "https://github.com/VASANTH777999",
   resume:
-    "https://drive.google.com/file/d/1OXor_gGucTSelP0WsvKasb02J_n1EIp3/view?usp=sharing",
+    "https://drive.google.com/file/d/1OGbwUghCZaVrlMZvpTAbIOHHJd3xM8ZT/view?usp=sharing",
   linkedin: "https://linkedin.com/in/kotluri-vasanth",
   leetcode: "https://leetcode.com/u/Kotluri-Vasanth",
   email: "kotlurivasanth@gmail.com",
