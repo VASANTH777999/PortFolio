@@ -9,6 +9,7 @@ const HeroContainer = styled.div`
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
+  background-color: ${({ theme }) => theme.bg};
 `;
 
 const BackgroundVideo = styled.video`
@@ -19,19 +20,22 @@ const BackgroundVideo = styled.video`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: 2;
+  z-index: 1;
   mix-blend-mode: lighten;
   opacity: 0.9;
+  pointer-events: none;
 
   @media (max-width: 960px) {
-    top: -240px;
+    top: -200px;
+    opacity: 0.5;
   }
 
   @media (max-width: 640px) {
-    top: -440px;
-    height: 80%;
+    top: -320px;
+    height: 75%;
     width: 120%;
     left: -10%;
+    opacity: 0.4;
   }
 `;
 
